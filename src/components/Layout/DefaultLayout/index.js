@@ -1,5 +1,4 @@
 import Header from "./Header";
-import Sidebar from "./Sidebar";
 import classes from "./DefaultLayout.module.scss";
 
 function DefaultLayout({ children, active_index }) {
