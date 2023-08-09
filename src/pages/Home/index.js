@@ -71,7 +71,7 @@ export default () => {
 
       <div className={classes["container__home-heading"]}>
         <div className={classes["container__home-heading-title"]}>
-          Lịch sử đơn hàng mới nhất
+          Lịch Sử Đơn Hàng Mới Nhất
         </div>
         <div className={classes["container__home-heading-btn"]}>
           <FontAwesomeIcon icon={faPlus} />
