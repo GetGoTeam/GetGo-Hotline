@@ -1,10 +1,9 @@
-/* eslint-disable import/no-anonymous-default-export */
 import { faEye, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 
 import classes from "./index.module.scss";
-import ModalDetails from "../../components/ModalDetails";
+import ModalDetails from "~components/ModalDetails";
 
 export default () => {
   const database = [
@@ -71,7 +70,7 @@ export default () => {
 
       <div className={classes["container__home-heading"]}>
         <div className={classes["container__home-heading-title"]}>
-          Lịch Sử Đơn Hàng Mới Nhất
+          Lịch sử đơn hàng mới nhất
         </div>
         <div className={classes["container__home-heading-btn"]}>
           <FontAwesomeIcon icon={faPlus} />
