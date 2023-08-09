@@ -1,0 +1,114 @@
+@import "/src/utils/base.scss";
+
+.container__modal {
+    height: auto;
+    width: 60vw;
+    background-color: $primary_50;
+    border-radius: 0.4rem;
+
+    &-title {
+        height: 3.5rem;
+        background-color: $primary_900;
+        border-top-left-radius: 0.4rem;
+        border-top-right-radius: 0.4rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        font-size: 1.4rem;
+        font-weight: 640;
+        color: white;
+    }
+
+    &-body {
+        margin: 0 5rem;
+        margin-top: 1.5rem;
+
+        &-location {
+            border-bottom: 0.1rem solid $text_400;
+
+            &-point {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &-line {
+                    width: 25rem;
+                    margin: 0 0.5rem;
+                    border: 0.1px dashed $text_400;
+                }
+            }
+
+            &-name {
+                display: flex;
+                justify-content: space-between;
+                text-align: center;
+                margin: 0 0.3rem;
+
+                p {
+                    width: 35%;
+                    font-size: 0.95rem;
+                    color: $text_800;
+                }
+            }
+        }
+
+        &-infor {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            border-bottom: 0.1rem solid $text_400;
+            padding-bottom: 0.5rem;
+
+            h3 {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: $text_900;
+                margin: 0.8rem 0;
+            }
+
+            p {
+                margin: 0.3rem 0;         
+            }
+
+            &-driver {
+                width: 50%;
+            }
+        }
+
+        &-payment {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+
+            p {
+                font-size: 1.4rem;
+                font-weight: 600;
+                margin: 0.5rem 0;
+            }
+        }
+
+        &-btn {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            margin-top: 0.8rem;
+
+            &-accept {
+                padding: 0.5rem 1.5rem;
+                font-size: 1.1rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: white;
+                background-color: $primary_900;
+                border-radius: 0.5rem;
+
+                &:hover {
+                    cursor: pointer;
+                    filter: brightness(85%);
+                }
+            }
+        }
+    }
+}
