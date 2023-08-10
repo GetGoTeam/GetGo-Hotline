@@ -70,7 +70,9 @@ export default () => {
       )}
 
       <div className={classes["container__home-heading"]}>
-        <div className={classes["container__home-heading-title"]}>Lịch sử đơn hàng mới nhất</div>
+        <div className={classes["container__home-heading-title"]}>
+          Lịch sử đơn hàng mới nhất
+        </div>
         <div className={classes["container__home-heading-btn"]}>
           <FontAwesomeIcon icon={faPlus} />
           <p>Tạo đơn</p>
@@ -78,27 +80,88 @@ export default () => {
       </div>
       <div className={classes["table-container"]}>
         <div className={classes["table-container-title"]}>
-          <div className={`${classes["table-container-no"]} ${classes["title"]}`}>STT</div>
-          <div className={`${classes["table-container-name"]} ${classes["title"]}`}>Tên Khách Hàng</div>
-          <div className={`${classes["table-container-dob"]} ${classes["title"]}`}>Số Điện Thoại</div>
-          <div className={`${classes["table-container-phone"]} ${classes["title"]}`}>Điểm Đón</div>
-          <div className={`${classes["table-container-account"]} ${classes["title"]}`}>Điểm Đến</div>
-          <div className={`${classes["table-container-time"]} ${classes["title"]}`}>Thời Gian</div>
-          <div className={`${classes["table-container-status"]} ${classes["title"]}`}>Trạng Thái</div>
+          <div
+            className={`${classes["table-container-no"]} ${classes["title"]}`}
+          >
+            STT
+          </div>
+          <div
+            className={`${classes["table-container-name"]} ${classes["title"]}`}
+          >
+            Tên Khách Hàng
+          </div>
+          <div
+            className={`${classes["table-container-dob"]} ${classes["title"]}`}
+          >
+            Số Điện Thoại
+          </div>
+          <div
+            className={`${classes["table-container-phone"]} ${classes["title"]}`}
+          >
+            Điểm Đón
+          </div>
+          <div
+            className={`${classes["table-container-account"]} ${classes["title"]}`}
+          >
+            Điểm Đến
+          </div>
+          <div
+            className={`${classes["table-container-time"]} ${classes["title"]}`}
+          >
+            Thời Gian
+          </div>
+          <div
+            className={`${classes["table-container-status"]} ${classes["title"]}`}
+          >
+            Trạng Thái
+          </div>
           <div className={`${classes["table-container-tools"]}`}></div>
         </div>
         <div className={classes["table-container-content"]}>
           {database.map((item, index) => (
             <div className={classes["table-container-content-item"]}>
-              <div className={`${classes["table-container-no"]} ${classes["item"]}`}>{index + 1}</div>
-              <div className={`${classes["table-container-name"]} ${classes["item"]}`}>{item.name}</div>
-              <div className={`${classes["table-container-dob"]} ${classes["item"]}`}>{item.phone}</div>
-              <div className={`${classes["table-container-phone"]} ${classes["item"]}`}>{item.pickUp}</div>
-              <div className={`${classes["table-container-account"]} ${classes["item"]}`}>{item.destination}</div>
-              <div className={`${classes["table-container-time"]} ${classes["item"]}`}>{item.time}</div>
-              <div className={`${classes["table-container-status"]} ${classes["item"]}`}>{item.status}</div>
-              <div className={`${classes["table-container-tools"]} ${classes["item"]}`}>
-                <div className={classes["btn-customize"]} onClick={handleOpenModalDetails}>
+              <div
+                className={`${classes["table-container-no"]} ${classes["item"]}`}
+              >
+                {index + 1}
+              </div>
+              <div
+                className={`${classes["table-container-name"]} ${classes["item"]}`}
+              >
+                {item.name}
+              </div>
+              <div
+                className={`${classes["table-container-dob"]} ${classes["item"]}`}
+              >
+                {item.phone}
+              </div>
+              <div
+                className={`${classes["table-container-phone"]} ${classes["item"]}`}
+              >
+                {item.pickUp}
+              </div>
+              <div
+                className={`${classes["table-container-account"]} ${classes["item"]}`}
+              >
+                {item.destination}
+              </div>
+              <div
+                className={`${classes["table-container-time"]} ${classes["item"]}`}
+              >
+                {item.time}
+              </div>
+              <div
+                className={`${classes["table-container-status"]} ${classes["item"]}`}
+              >
+                {item.status}
+              </div>
+              <div
+                className={`${classes["table-container-tools"]} ${classes["item"]}`}
+              >
+                <div
+                  className={classes["btn-customize"]}
+                  onClick={handleOpenModalDetails}
+                >
                   <FontAwesomeIcon icon={faEye} color="#fff" />
                 </div>
               </div>

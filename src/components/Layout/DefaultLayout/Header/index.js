@@ -3,9 +3,11 @@ import classes from "./Header.module.scss";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { img_hotline } from "../../../../assets/icons";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { Router } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
+  const navigate = useNavigate();
+
   return (
     <div className={classes["header-container"]}>
       <div className={classes["logo-container"]}>
@@ -14,7 +16,10 @@ function Header() {
         </a>
       </div>
       <div className={classes["navbar-container"]}>
-        <div className={classes["navbar-icon"]}>
+        <div
+          className={classes["navbar-icon"]}
+          onClick={() => navigate("/profile")}
+        >
           <img src={img_hotline} alt="none" />
         </div>
         <div className={classes["logout"]}>
