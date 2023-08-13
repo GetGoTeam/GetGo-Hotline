@@ -1,11 +1,13 @@
 import classes from "./ChooseDestination.module.scss";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Marker from "~components/Marker";
+import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import axios from "axios";
 
 const center = {
-  lat: 37.7749,
-  lng: -122.4194,
+  lat: 10.7626,
+  lng: 106.6823,
 };
 
 const ChooseDestination = () => {
@@ -13,21 +15,62 @@ const ChooseDestination = () => {
 
   const [mapCenter, setMapCenter] = useState(center);
 
+  const [address, setAddress] = useState(null);
+
   const onLoad = (mapInstance) => {
-    mapInstance.addListener("dragend", () => {
+    mapInstance.addListener("dragend", async () => {
       const newCenter = mapInstance.getCenter();
-      setMapCenter({ lat: newCenter.lat(), lng: newCenter.lng() });
+      const lat = newCenter.lat();
+      const lng = newCenter.lng();
+      setMapCenter({ lat: lat, lng: lng });
+
+      const tmp = await getPlaceFromCoordinates(lat, lng);
+      setAddress(tmp);
     });
+  };
+
+  useEffect(() => {
+    if (address) alert(address.label);
+  }, [address]);
+
+  const getPlaceFromCoordinates = async (latitude, longitude) => {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_APIKEY}`;
+
+    try {
+      const response = await axios.get(url);
+      if (response.data.results.length > 0) {
+        return response.data.results[0].formatted_address;
+      } else {
+        console.log(response.data.error_message);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting place from coordinates:", error);
+      return "Error";
+    }
   };
 
   return (
     <>
-      <h1>Chọn điểm đến</h1>
+      <GooglePlacesAutocomplete
+        apiKey={process.env.REACT_APP_GOOGLE_MAPS_APIKEY}
+        apiOptions={{ language: "vi", region: "VN" }}
+        autocompletionRequest={{
+          componentRestrictions: {
+            country: ["vn"],
+          },
+        }}
+        selectProps={{
+          value: address,
+          onChange: setAddress,
+        }}
+      />
+
       {isLoaded ? (
         <GoogleMap
           mapContainerClassName={classes.mapContainer}
           center={center}
-          zoom={10}
+          zoom={15}
           onLoad={onLoad}
           onCenterChanged={() => {}}
         >
