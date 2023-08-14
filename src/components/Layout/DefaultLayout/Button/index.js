@@ -1,15 +1,5 @@
 import classes from "./Button.module.scss";
-
-function CreateAccountBtn() {
-  return (
-    <div className={classes["createAccountBtn"]}>
-      <div className={classes["createAccountBtn__icon"]}>
-        <i className="fa-solid fa-plus"></i>
-      </div>
-      <div className={classes["createAccountBtn__text"]}>THÊM TÀI KHOẢN</div>
-    </div>
-  );
-}
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function CustomizeBtn(props) {
   const { iconBtn, titleBtn } = props;
@@ -23,4 +13,27 @@ function CustomizeBtn(props) {
   );
 }
 
-export { CreateAccountBtn, CustomizeBtn };
+function IconBtn(props) {
+  const { iconLeft, iconRight, title, disable, width, height } = props;
+  return (
+    <div
+      className={`${classes["icon-btn"]} ${disable && classes["btn--disable"]}`}
+      style={{ width: width, height: height }}
+    >
+      <FontAwesomeIcon icon={iconLeft} color="white" />
+      <div className={classes["icon-btn-title"]}>{title}</div>
+      <FontAwesomeIcon icon={iconRight} color="white" />
+    </div>
+  );
+}
+
+function ToolBtn(props) {
+  const { icon, disable } = props;
+  return (
+    <div className={`${classes["tool-btn"]} ${disable && classes["btn--disable"]}`}>
+      <FontAwesomeIcon icon={icon} color="white" />
+    </div>
+  );
+}
+
+export { CustomizeBtn, IconBtn, ToolBtn };

@@ -1,35 +1,4 @@
-@import '../../../../utils/base.scss';
-
-.createAccountBtn {
-  display: flex;
-  background-color: #ff9494;
-  width: 200px;
-  height: 50px;
-  border-radius: 80px;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: filter 0.2s;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-.createAccountBtn:hover {
-  filter: brightness(85%);
-}
-
-.createAccountBtn__icon {
-  font-size: 17px;
-  color: white;
-  margin-right: 10px;
-}
-
-.createAccountBtn__text {
-  font-size: 17px;
-  color: white;
-  font-weight: 600;
-}
-
+@import "/src/utils/base.scss";
 
 .customize-btn {
   display: flex;
@@ -44,11 +13,11 @@
   &:last-child {
     margin-right: 0;
   }
-  
+
   &-icon {
     width: fit-content;
     margin-right: 0.5rem;
-    
+
     img {
       height: 1.5rem;
       width: auto;
@@ -66,4 +35,62 @@
 .customize-btn:hover {
   filter: brightness(85%);
   cursor: pointer;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: fit-content;
+  padding: 0.5rem;
+  border-radius: 6px;
+  background-color: $primary_900;
+  transition: filter 0.2s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.icon-btn:hover {
+  filter: brightness(85%);
+  cursor: pointer;
+}
+
+.btn--disable {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: none;
+}
+
+.icon-btn-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  margin: 0 0.5rem;
+  margin-bottom: 3px;
+}
+
+.tool-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.6rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 6px;
+  background-color: $primary_900;
+  transition: filter 0.2s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.tool-btn:hover {
+  filter: brightness(85%);
+  cursor: pointer;
+}
+
+.tool-btn-title {
+  font-size: 0.5rem;
+  font-weight: bold;
+  color: white;
 }

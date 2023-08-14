@@ -1,0 +1,40 @@
+@import "/src/utils/base.scss";
+
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.input-container {
+  width: 35vw;
+}
+
+.input {
+  background-color: white;
+}
+
+.input-border {
+  border-color: $primary_900 !important;
+  border-radius: 4px 0 0 4px !important;
+}
+
+.inputLabel {
+  color: $primary_900 !important;
+}
+
+.searchBtn-container {
+  background-color: $primary_900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  border-radius: 0 4px 4px 0;
+  transition: filter 0.2s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.searchBtn-container:hover {
+  filter: brightness(85%);
+  cursor: pointer;
+}
