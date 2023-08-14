@@ -2,15 +2,26 @@ import classes from "./SearchBar.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import TextField from "@mui/material/TextField";
+import { useState } from "react";
 
 const SearchBar = (props) => {
-  const { label, hiddenSearchBtn } = props;
+  const { label, hiddenSearchBtn, setPhone } = props;
+  const [inputValue, setInputValue] = useState();
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSearch = () => {
+    setPhone(inputValue);
+  };
 
   return (
     <div className={classes["container"]}>
       <div className={classes["input-container"]}>
         <TextField
           className={classes["input"]}
+          onChange={handleInputChange}
           variant="outlined"
           label={label}
           size="small"
@@ -28,7 +39,7 @@ const SearchBar = (props) => {
         />
       </div>
       {!hiddenSearchBtn && (
-        <div className={classes["searchBtn-container"]}>
+        <div className={classes["searchBtn-container"]} onClick={handleSearch}>
           <FontAwesomeIcon icon={faMagnifyingGlass} color="white" />
         </div>
       )}

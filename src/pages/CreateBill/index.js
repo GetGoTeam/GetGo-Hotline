@@ -53,7 +53,7 @@ const CreateBill = () => {
             {screen === 1 ? (
               <IconBtn title="Tiếp tục" iconRight={faChevronRight} width={100} onClick={() => setScreen(2)} />
             ) : (
-              <IconBtn title="Tạo đơn" iconRight={faPlus} width={100} onClick={() => setScreen(2)} />
+              <IconBtn title="Tạo đơn" iconRight={faPlus} width={100} onClick={() => console.log(origin)} />
             )}
           </div>
         </div>
@@ -62,7 +62,7 @@ const CreateBill = () => {
         <div className={classes["screen1-container"]}>
           <div className={classes["searchBar-container"]}>
             <div className={classes["search-text"]}>Nhập số điện thoại khách hàng</div>
-            <SearchBar label="Nhập số điện thoại" />
+            <SearchBar label="Nhập số điện thoại" setPhone={setPhone} />
           </div>
           <div className={classes["divLine"]} />
           <div className={classes["table-title"]}>Các địa điểm đi nhiều nhất</div>
@@ -76,7 +76,7 @@ const CreateBill = () => {
             </div>
             <div className={classes["table-container-content"]}>
               {currentTableData.map((item, index) => (
-                <div className={classes["table-container-content-item"]}>
+                <div className={classes["table-container-content-item"]} key={index}>
                   <div className={`${classes["table-container-no"]} ${classes["item"]}`}>
                     {pageSize * (currentPage - 1) + index + 1}
                   </div>
@@ -85,10 +85,10 @@ const CreateBill = () => {
                     {item.destination}
                   </div>
                   <div className={`${classes["table-container-tools"]} ${classes["item"]}`}>
-                    <div className={classes["ToolBtn"]}>
+                    <div className={classes["ToolBtn"]} onClick={() => setOrigin(item.origin)}>
                       <ToolBtn icon={faLocationDot} />
                     </div>
-                    <div className={classes["ToolBtn"]}>
+                    <div className={classes["ToolBtn"]} onClick={() => setDestination(item.destination)}>
                       <ToolBtn icon={faLocationCrosshairs} />
                     </div>
                   </div>
@@ -110,8 +110,8 @@ const CreateBill = () => {
         <div className={classes["screen2-container"]}>
           <div className={classes["input-container"]}>
             <div className={classes["input-label"]}>Số điện thoại</div>
-            {/* <SearchBar label="Số điện thoại" hiddenSearchBtn /> */}
             <TextField
+              defaultValue={phone}
               variant="outlined"
               label={"Số điện thoại"}
               size="small"
@@ -134,7 +134,7 @@ const CreateBill = () => {
                 },
               }}
               selectProps={{
-                value: origin,
+                defaultInputValue: origin,
                 onChange: setOrigin,
               }}
             />
@@ -150,7 +150,7 @@ const CreateBill = () => {
                 },
               }}
               selectProps={{
-                value: destination,
+                defaultInputValue: destination,
                 onChange: setDestination,
               }}
             />

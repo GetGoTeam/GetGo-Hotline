@@ -21,9 +21,9 @@ function IconBtn(props) {
       style={{ width: width, height: height }}
       onClick={onClick}
     >
-      <FontAwesomeIcon icon={iconLeft} color="white" />
+      {iconLeft && <FontAwesomeIcon icon={iconLeft} color="white" />}
       <div className={classes["icon-btn-title"]}>{title}</div>
-      <FontAwesomeIcon icon={iconRight} color="white" />
+      {iconRight && <FontAwesomeIcon icon={iconRight} color="white" />}
     </div>
   );
 }
