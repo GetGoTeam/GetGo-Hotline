@@ -6,7 +6,7 @@ import CreateBill from "~pages/CreateBill";
 import Locate from "~pages/Locate/index";
 
 const publicRoutes = [
-  { path: "/create-bill", component: CreateBill },
+  { path: "/", component: CreateBill },
   { path: "/monitor", component: Monitor },
   { path: "/profile", component: Profile },
   { path: "/locate", component: Locate },

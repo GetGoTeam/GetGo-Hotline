@@ -11,7 +11,7 @@ function Header() {
   return (
     <div className={classes["header-container"]}>
       <div className={classes["logo-container"]}>
-        <a className={classes["logo"]} href="/create-bill">
+        <a className={classes["logo"]} href="/">
           Hotline
         </a>
       </div>
