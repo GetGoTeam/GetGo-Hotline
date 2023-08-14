@@ -14,7 +14,6 @@
   border-bottom: solid 2px white;
   display: flex;
   justify-content: center;
-
 }
 
 .logo {
@@ -29,7 +28,7 @@
   text-decoration: none;
 }
 
-.navbar{
+.navbar {
   &-container {
     padding-right: 2rem;
     height: 100%;
@@ -37,9 +36,9 @@
     display: flex;
     justify-content: right;
     align-items: center;
-    box-shadow: 10px 5px 20px 0px rgba(0, 0, 0, 0.2);
+    border-bottom: 2px solid white;
   }
-  
+
   &-icon {
     margin-right: 1.5rem;
 

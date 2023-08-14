@@ -14,11 +14,12 @@ function CustomizeBtn(props) {
 }
 
 function IconBtn(props) {
-  const { iconLeft, iconRight, title, disable, width, height } = props;
+  const { iconLeft, iconRight, title, disable, width, height, onClick } = props;
   return (
     <div
       className={`${classes["icon-btn"]} ${disable && classes["btn--disable"]}`}
       style={{ width: width, height: height }}
+      onClick={onClick}
     >
       <FontAwesomeIcon icon={iconLeft} color="white" />
       <div className={classes["icon-btn-title"]}>{title}</div>
@@ -28,9 +29,9 @@ function IconBtn(props) {
 }
 
 function ToolBtn(props) {
-  const { icon, disable } = props;
+  const { icon, disable, onClick } = props;
   return (
-    <div className={`${classes["tool-btn"]} ${disable && classes["btn--disable"]}`}>
+    <div className={`${classes["tool-btn"]} ${disable && classes["btn--disable"]}`} onClick={onClick}>
       <FontAwesomeIcon icon={icon} color="white" />
     </div>
   );

@@ -3,10 +3,11 @@
 .container {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .input-container {
-  width: 35vw;
+  width: 100%;
 }
 
 .input {
@@ -37,4 +38,8 @@
 .searchBtn-container:hover {
   filter: brightness(85%);
   cursor: pointer;
+}
+
+.border-radius {
+  border-radius: 4px !important;
 }
