@@ -14,6 +14,7 @@ import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import TextField from "@mui/material/TextField";
 import Select from "react-select";
 import FadeInOut from "~components/FadeInOut";
+import Swal from "sweetalert2";
 
 const CreateBill = () => {
   let pageSize = 10;
@@ -39,6 +40,26 @@ const CreateBill = () => {
   ];
 
   const duration = 200;
+
+  const handleCreateBill = () => {
+    if (!phone || !vehicleType || !origin || !destination)
+      Swal.fire({
+        icon: "error",
+        title: "Tạo đơn thất bại",
+        text: "Vui lòng điền đầy đủ thông tin",
+        width: "50rem",
+        confirmButtonColor: "#FF9494",
+      });
+    else
+      Swal.fire({
+        icon: "success",
+        title: "Tạo đơn thành công!",
+        width: "50rem",
+        confirmButtonColor: "#FF9494",
+      }).then(function () {
+        window.location.reload(false);
+      });
+  };
 
   return (
     <>
@@ -75,7 +96,7 @@ const CreateBill = () => {
                 }}
               />
             ) : (
-              <IconBtn title="Tạo đơn" iconRight={faPlus} width={100} onClick={() => console.log(vehicleType)} />
+              <IconBtn title="Tạo đơn" iconRight={faPlus} width={100} onClick={() => handleCreateBill()} />
             )}
           </div>
         </div>
