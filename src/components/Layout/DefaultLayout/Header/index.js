@@ -11,8 +11,18 @@ function Header() {
   return (
     <div className={classes["header-container"]}>
       <div className={classes["logo-container"]}>
-        <a className={classes["logo"]} href="/">
+        <a className={classes["logo"]} href="/create-bill">
           Hotline
+        </a>
+      </div>
+      <div className={classes["logo-container"]}>
+        <a className={classes["logo"]} href="/locate">
+          Locate
+        </a>
+      </div>
+      <div className={classes["logo-container"]}>
+        <a className={classes["logo"]} href="/monitor">
+          Monitor
         </a>
       </div>
       <div className={classes["navbar-container"]}>

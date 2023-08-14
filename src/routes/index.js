@@ -1,15 +1,16 @@
 import Profile from "../pages/Profile";
-import Trips from "../pages/Trips";
-import Reports from "../pages/Reports";
-import HomePage from "../pages/Home";
+// import Trips from "../pages/Trips";
+// import Reports from "../pages/Reports";
+import Monitor from "../pages/Monitor";
 import CreateBill from "~pages/CreateBill";
+import Locate from "~pages/Locate/index";
 
 const publicRoutes = [
-  { path: "/", component: HomePage },
-  { path: "/profile", component: Profile },
-  { path: "/trips", component: Trips },
-  { path: "/reports", component: Reports },
   { path: "/create-bill", component: CreateBill },
+  { path: "/monitor", component: Monitor },
+  { path: "/profile", component: Profile },
+  { path: "/locate", component: Locate },
+  // { path: "/reports", component: Reports },
 ];
 
 const privateRoutes = [];
