@@ -15,6 +15,8 @@ import TextField from "@mui/material/TextField";
 import Select from "react-select";
 import FadeInOut from "~components/FadeInOut";
 import Swal from "sweetalert2";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreateBill = () => {
   let pageSize = 10;
@@ -60,6 +62,8 @@ const CreateBill = () => {
         window.location.reload(false);
       });
   };
+
+  const notify = (content) => toast.success(content);
 
   return (
     <>
@@ -129,10 +133,22 @@ const CreateBill = () => {
                       {item.destination}
                     </div>
                     <div className={`${classes["table-container-tools"]} ${classes["item"]}`}>
-                      <div className={classes["ToolBtn"]} onClick={() => setOrigin(item.origin)}>
+                      <div
+                        className={classes["ToolBtn"]}
+                        onClick={() => {
+                          setOrigin(item.origin);
+                          notify("Đã copy điểm đón " + origin);
+                        }}
+                      >
                         <ToolBtn icon={faLocationDot} />
                       </div>
-                      <div className={classes["ToolBtn"]} onClick={() => setDestination(item.destination)}>
+                      <div
+                        className={classes["ToolBtn"]}
+                        onClick={() => {
+                          setDestination(item.destination);
+                          notify("Đã copy điểm đến " + destination);
+                        }}
+                      >
                         <ToolBtn icon={faLocationCrosshairs} />
                       </div>
                     </div>
@@ -204,6 +220,7 @@ const CreateBill = () => {
           </div>
         </FadeInOut>
       )}
+      <ToastContainer position="top-left" autoClose={3000} theme="light" />
     </>
   );
 };
