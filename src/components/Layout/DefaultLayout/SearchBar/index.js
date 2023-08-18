@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 
 const SearchBar = (props) => {
-  const { label, hiddenSearchBtn, setPhone } = props;
+  const { label, hiddenSearchBtn, onChange } = props;
   const [inputValue, setInputValue] = useState();
 
   const handleInputChange = (event) => {
@@ -13,7 +13,7 @@ const SearchBar = (props) => {
   };
 
   const handleSearch = () => {
-    setPhone(inputValue);
+    onChange(inputValue);
   };
 
   return (

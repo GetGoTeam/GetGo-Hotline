@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { IconBtn } from "~components/Layout/DefaultLayout/Button";
 import { Bounce } from "react-activity";
 import "react-activity/dist/library.css";
+import { colors } from "~utils/base";
 
 const getCoordinatesFromAddress = async (address) => {
   try {
@@ -86,7 +87,7 @@ export default function Locating(props) {
       icon: "success",
       title: "Định vị thành công!",
       width: "50rem",
-      confirmButtonColor: "#FF9494",
+      confirmButtonColor: colors.primary_900,
     }).then(function () {
       setBackdropStatus(false);
     });

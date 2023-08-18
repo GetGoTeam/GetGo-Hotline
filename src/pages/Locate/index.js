@@ -1,5 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { faEye, faLocationCrosshairs, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faLocationCrosshairs } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useMemo } from "react";
 import classes from "./index.module.scss";
@@ -137,6 +137,7 @@ export default () => {
     const firstPageIndex = (currentPage - 1) * pageSize;
     const lastPageIndex = firstPageIndex + pageSize;
     return database.slice(firstPageIndex, lastPageIndex);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageSize, currentPage]);
 
   const [backdropStatus, setBackdropStatus] = useState(false);
