@@ -7,6 +7,8 @@ import Marker from "~components/Marker";
 import FadeInOut from "~components/FadeInOut";
 import Swal from "sweetalert2";
 import { IconBtn } from "~components/Layout/DefaultLayout/Button";
+import { Bounce } from "react-activity";
+import "react-activity/dist/library.css";
 
 const getCoordinatesFromAddress = async (address) => {
   try {
@@ -48,14 +50,14 @@ export default function Locating(props) {
         setOriginCoord(origin);
         const destination = await getCoordinatesFromAddress(destinationAddress);
         setDestinationCoord(destination);
-        console.log("request: ", originCoord);
       } catch (error) {
         console.error("Lỗi khi lấy vị trí:", error);
       } finally {
         setIsLoadedCoord(true);
       }
     })();
-  }, [destinationAddress, originAddress, originCoord]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [screen, setScreen] = useState(1);
   const [fadeInOut, setFadeInOut] = useState(true);
@@ -121,6 +123,7 @@ export default function Locating(props) {
                   title="Tiếp tục"
                   iconRight={faChevronRight}
                   width={100}
+                  // disable={isLoadedCoord && isLoadedMap ? false : true}
                   onClick={() => {
                     setFadeInOut(false);
                     setTimeout(() => {
@@ -168,7 +171,7 @@ export default function Locating(props) {
                   </div>
                 </GoogleMap>
               ) : (
-                <div>Loading...</div>
+                <Bounce className={classes["loading"]} />
               )}
             </div>
           </FadeInOut>
@@ -199,7 +202,7 @@ export default function Locating(props) {
                   </div>
                 </GoogleMap>
               ) : (
-                <div>Loading...</div>
+                <Bounce className={classes["loading"]} />
               )}
             </div>
           </FadeInOut>
