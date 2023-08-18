@@ -2,31 +2,64 @@ import classes from "./Locating.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faChevronLeft, faChevronRight, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Marker from "~components/Marker";
 import FadeInOut from "~components/FadeInOut";
 import Swal from "sweetalert2";
 import { IconBtn } from "~components/Layout/DefaultLayout/Button";
 
-const originCoordDefault = {
-  lat: 10.7626,
-  lng: 106.6823,
-};
+const getCoordinatesFromAddress = async (address) => {
+  try {
+    const url = `https://rsapi.goong.io/geocode?address=${encodeURIComponent(address)}&api_key=${
+      process.env.REACT_APP_GOONG_APIKEY
+    }`;
 
-const destinationCoordDefault = {
-  lat: 10.7626,
-  lng: 106.6823,
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.results.length > 0) {
+      const latitude = data.results[0].geometry.location.lat;
+      const longitude = data.results[0].geometry.location.lng;
+      return {
+        lat: latitude,
+        lng: longitude,
+      };
+    } else {
+      console.error("No results found.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
 };
 
 export default function Locating(props) {
   const { setBackdropStatus, originAddress, destinationAddress } = props;
-  const { isLoaded } = useLoadScript({ googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_APIKEY });
-  const [originCoord, setOriginCoord] = useState(originCoordDefault);
-  const [destinationCoord, setDestinationCoord] = useState(destinationCoordDefault);
+  const { isLoaded: isLoadedMap } = useLoadScript({ googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_APIKEY });
+  const [originCoord, setOriginCoord] = useState();
+  const [destinationCoord, setDestinationCoord] = useState();
+  const [isLoadedCoord, setIsLoadedCoord] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const origin = await getCoordinatesFromAddress(originAddress);
+        setOriginCoord(origin);
+        const destination = await getCoordinatesFromAddress(destinationAddress);
+        setDestinationCoord(destination);
+        console.log("request: ", originCoord);
+      } catch (error) {
+        console.error("Lỗi khi lấy vị trí:", error);
+      } finally {
+        setIsLoadedCoord(true);
+      }
+    })();
+  }, [destinationAddress, originAddress, originCoord]);
 
   const [screen, setScreen] = useState(1);
   const [fadeInOut, setFadeInOut] = useState(true);
-  const duration = 0;
+  const duration = 200;
 
   const onLoadBegin = (mapInstance) => {
     mapInstance.addListener("dragend", async () => {
@@ -111,10 +144,10 @@ export default function Locating(props) {
         {screen === 1 ? (
           <FadeInOut show={fadeInOut} duration={duration}>
             <div className={classes["GoogleMap"]}>
-              {isLoaded ? (
+              {isLoadedMap && isLoadedCoord ? (
                 <GoogleMap
                   mapContainerClassName={classes.mapContainer}
-                  center={originCoordDefault}
+                  center={originCoord}
                   zoom={15}
                   onLoad={onLoadBegin}
                   onCenterChanged={() => {}}
@@ -142,10 +175,10 @@ export default function Locating(props) {
         ) : (
           <FadeInOut show={fadeInOut} duration={duration}>
             <div className={classes["GoogleMap"]}>
-              {isLoaded ? (
+              {isLoadedMap && isLoadedCoord ? (
                 <GoogleMap
                   mapContainerClassName={classes.mapContainer}
-                  center={destinationCoordDefault}
+                  center={destinationCoord}
                   zoom={15}
                   onLoad={onLoadDestination}
                   onCenterChanged={() => {}}
