@@ -137,7 +137,7 @@ const CreateBill = () => {
                         className={classes["ToolBtn"]}
                         onClick={() => {
                           setOrigin(item.origin);
-                          notify("Đã copy điểm đón " + origin);
+                          notify("Đã copy điểm đón " + item.origin);
                         }}
                       >
                         <ToolBtn icon={faLocationDot} />
@@ -146,7 +146,7 @@ const CreateBill = () => {
                         className={classes["ToolBtn"]}
                         onClick={() => {
                           setDestination(item.destination);
-                          notify("Đã copy điểm đến " + destination);
+                          notify("Đã copy điểm đến " + item.destination);
                         }}
                       >
                         <ToolBtn icon={faLocationCrosshairs} />
