@@ -9,21 +9,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import SearchBar from "~components/Layout/DefaultLayout/SearchBar";
 import Pagination from "~components/Layout/DefaultLayout/Pagination/Pagination";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import TextField from "@mui/material/TextField";
 import Select from "react-select";
 import FadeInOut from "~components/FadeInOut";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const CreateBill = () => {
-  let pageSize = 10;
+  const [listHistory, setListHistory] = useState([]);
+
+  let pageSize = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const currentTableData = useMemo(() => {
     const firstPageIndex = (currentPage - 1) * pageSize;
     const lastPageIndex = firstPageIndex + pageSize;
-    return database.slice(firstPageIndex, lastPageIndex);
-  }, [pageSize, currentPage]);
+    return listHistory.slice(firstPageIndex, lastPageIndex);
+  }, [pageSize, currentPage, listHistory]);
 
   const [screen, setScreen] = useState(1);
   const [fadeInOut, setFadeInOut] = useState(true);
@@ -34,9 +37,9 @@ const CreateBill = () => {
   const [destination, setDestination] = useState();
 
   const options = [
-    { value: "motorcycle", label: "Xe máy" },
-    { value: "car4", label: "Xe hơi 4 chỗ" },
-    { value: "car7", label: "Xe hơi 7 chỗ" },
+    { value: 1, label: "Xe máy" },
+    { value: 4, label: "Xe hơi 4 chỗ" },
+    { value: 7, label: "Xe hơi 7 chỗ" },
   ];
 
   const duration = 200;
@@ -50,7 +53,7 @@ const CreateBill = () => {
         width: "50rem",
         confirmButtonColor: "#FF9494",
       });
-    else
+    else {
       Swal.fire({
         icon: "success",
         title: "Tạo đơn thành công!",
@@ -58,6 +61,32 @@ const CreateBill = () => {
         confirmButtonColor: "#FF9494",
       }).then(function () {
         window.location.reload(false);
+      });
+    }
+  };
+
+  const handleSearchPhone = inputPhone => {
+    setPhone(inputPhone);
+    axios
+      .get(`http://localhost:3007/hotlines/trips-customer-phone`, {
+        params: {
+          phone: inputPhone,
+        },
+      })
+      .then(response => {
+        // console.log(response, inputPhone);
+        const data = [];
+        response.data.forEach(element => {
+          data.push({
+            origin: element.address_pickup,
+            destination: element.address_destination,
+          });
+        });
+        setListHistory(data);
+        // console.log(listHistory);
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
       });
   };
 
@@ -96,7 +125,12 @@ const CreateBill = () => {
                 }}
               />
             ) : (
-              <IconBtn title="Tạo đơn" iconRight={faPlus} width={100} onClick={() => handleCreateBill()} />
+              <IconBtn
+                title="Tạo đơn"
+                iconRight={faPlus}
+                width={100}
+                onClick={() => handleCreateBill()}
+              />
             )}
           </div>
         </div>
@@ -105,34 +139,72 @@ const CreateBill = () => {
         <FadeInOut show={fadeInOut} duration={duration}>
           <div className={classes["screen1-container"]}>
             <div className={classes["searchBar-container"]}>
-              <div className={classes["search-text"]}>Nhập số điện thoại khách hàng</div>
-              <SearchBar label="Nhập số điện thoại" setPhone={setPhone} />
+              <div className={classes["search-text"]}>
+                Nhập số điện thoại khách hàng
+              </div>
+              <SearchBar
+                label="Nhập số điện thoại"
+                handleSearchPhone={handleSearchPhone}
+              />
             </div>
             <div className={classes["divLine"]} />
-            <div className={classes["table-title"]}>Các địa điểm đi nhiều nhất</div>
+            <div className={classes["table-title"]}>
+              Các địa điểm đi nhiều nhất
+            </div>
 
             <div className={classes["table-container"]}>
               <div className={classes["table-container-title"]}>
-                <div className={`${classes["table-container-no"]} ${classes["title"]}`}>STT</div>
-                <div className={`${classes["table-container-origin"]} ${classes["title"]}`}>Điểm đón</div>
-                <div className={`${classes["table-container-destination"]} ${classes["title"]}`}>Điểm đến</div>
+                <div
+                  className={`${classes["table-container-no"]} ${classes["title"]}`}
+                >
+                  STT
+                </div>
+                <div
+                  className={`${classes["table-container-origin"]} ${classes["title"]}`}
+                >
+                  Điểm đón
+                </div>
+                <div
+                  className={`${classes["table-container-destination"]} ${classes["title"]}`}
+                >
+                  Điểm đến
+                </div>
                 <div className={`${classes["table-container-tools"]}`} />
               </div>
               <div className={classes["table-container-content"]}>
                 {currentTableData.map((item, index) => (
-                  <div className={classes["table-container-content-item"]} key={index}>
-                    <div className={`${classes["table-container-no"]} ${classes["item"]}`}>
+                  <div
+                    className={classes["table-container-content-item"]}
+                    key={index}
+                  >
+                    <div
+                      className={`${classes["table-container-no"]} ${classes["item"]}`}
+                    >
                       {pageSize * (currentPage - 1) + index + 1}
                     </div>
-                    <div className={`${classes["table-container-origin"]} ${classes["item"]}`}>{item.origin}</div>
-                    <div className={`${classes["table-container-destination"]} ${classes["item"]}`}>
+                    <div
+                      className={`${classes["table-container-origin"]} ${classes["item"]}`}
+                    >
+                      {item.origin}
+                    </div>
+                    <div
+                      className={`${classes["table-container-destination"]} ${classes["item"]}`}
+                    >
                       {item.destination}
                     </div>
-                    <div className={`${classes["table-container-tools"]} ${classes["item"]}`}>
-                      <div className={classes["ToolBtn"]} onClick={() => setOrigin(item.origin)}>
+                    <div
+                      className={`${classes["table-container-tools"]} ${classes["item"]}`}
+                    >
+                      <div
+                        className={classes["ToolBtn"]}
+                        onClick={() => setOrigin(item.origin)}
+                      >
                         <ToolBtn icon={faLocationDot} />
                       </div>
-                      <div className={classes["ToolBtn"]} onClick={() => setDestination(item.destination)}>
+                      <div
+                        className={classes["ToolBtn"]}
+                        onClick={() => setDestination(item.destination)}
+                      >
                         <ToolBtn icon={faLocationCrosshairs} />
                       </div>
                     </div>
@@ -144,9 +216,9 @@ const CreateBill = () => {
               <Pagination
                 className="pagination-bar"
                 currentPage={currentPage}
-                totalCount={database.length}
+                totalCount={listHistory.length}
                 pageSize={pageSize}
-                onPageChange={(page) => setCurrentPage(page)}
+                onPageChange={page => setCurrentPage(page)}
               />
             </div>
           </div>
