@@ -6,13 +6,13 @@ import { useState } from "react";
 
 const SearchBar = props => {
   const { label, hiddenSearchBtn, handleSearchPhone } = props;
+
   const [inputValue, setInputValue] = useState();
 
   const handleInputChange = event => {
     setInputValue(event.target.value);
     // console.log(event);
   };
-
   const handleSubmitPhone = event => {
     if (event.keyCode === 13) {
       handleSearchPhone(inputValue);

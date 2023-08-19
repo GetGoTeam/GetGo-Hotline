@@ -11,11 +11,16 @@ import SearchBar from "~components/Layout/DefaultLayout/SearchBar";
 import Pagination from "~components/Layout/DefaultLayout/Pagination/Pagination";
 import React, { useState, useMemo, useEffect } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+
 import TextField from "@mui/material/TextField";
 import Select from "react-select";
 import FadeInOut from "~components/FadeInOut";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import GoongAutoComplete from "~components/GoongAutoComplete";
+import { colors } from "~utils/base";
 
 const CreateBill = () => {
   const [listHistory, setListHistory] = useState([]);
@@ -45,20 +50,21 @@ const CreateBill = () => {
   const duration = 200;
 
   const handleCreateBill = () => {
+    console.log(phone);
     if (!phone || !vehicleType || !origin || !destination)
       Swal.fire({
         icon: "error",
         title: "Tạo đơn thất bại",
         text: "Vui lòng điền đầy đủ thông tin",
         width: "50rem",
-        confirmButtonColor: "#FF9494",
+        confirmButtonColor: colors.primary_900,
       });
     else {
       Swal.fire({
         icon: "success",
         title: "Tạo đơn thành công!",
         width: "50rem",
-        confirmButtonColor: "#FF9494",
+        confirmButtonColor: colors.primary_900,
       }).then(function () {
         window.location.reload(false);
       });
@@ -89,6 +95,8 @@ const CreateBill = () => {
         console.error("Error fetching data:", error);
       });
   };
+
+  const notify = content => toast.success(content);
 
   return (
     <>
@@ -197,13 +205,19 @@ const CreateBill = () => {
                     >
                       <div
                         className={classes["ToolBtn"]}
-                        onClick={() => setOrigin(item.origin)}
+                        onClick={() => {
+                          setOrigin(item.origin);
+                          notify("Đã copy điểm đón " + item.origin);
+                        }}
                       >
                         <ToolBtn icon={faLocationDot} />
                       </div>
                       <div
                         className={classes["ToolBtn"]}
-                        onClick={() => setDestination(item.destination)}
+                        onClick={() => {
+                          setDestination(item.destination);
+                          notify("Đã copy điểm đến " + item.destination);
+                        }}
                       >
                         <ToolBtn icon={faLocationCrosshairs} />
                       </div>
@@ -235,47 +249,62 @@ const CreateBill = () => {
                 size="small"
                 fullWidth
                 style={{ backgroundColor: "white" }}
+                onChange={event => setPhone(event.target.value)}
+                InputProps={{
+                  classes: {
+                    notchedOutline: classes["input-border"],
+                  },
+                }}
+                InputLabelProps={{
+                  classes: {
+                    focused: classes.inputLabel,
+                  },
+                }}
               />
             </div>
             <div className={classes["input-container"]}>
               <div className={classes["input-label"]}>Loại xe</div>
-              <Select options={options} onChange={setVehicleType} />
-            </div>
-            <div className={classes["input-container"]}>
-              <div className={classes["input-label"]}>Điểm đón</div>
-              <GooglePlacesAutocomplete
-                apiKey={process.env.REACT_APP_GOOGLE_MAPS_APIKEY}
-                apiOptions={{ language: "vi", region: "VN" }}
-                autocompletionRequest={{
-                  componentRestrictions: {
-                    country: ["vn"],
-                  },
-                }}
-                selectProps={{
-                  defaultInputValue: origin,
-                  onChange: setOrigin,
+              <Select
+                options={options}
+                onChange={setVehicleType}
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    borderColor: colors.primary_900,
+                    boxShadow: state.isFocused
+                      ? `0 0 0 1px ${colors.primary_900}`
+                      : "none",
+                    "&:hover": {
+                      borderColor: colors.primary_900,
+                    },
+                  }),
                 }}
               />
             </div>
             <div className={classes["input-container"]}>
+              <div className={classes["input-label"]}>Điểm đón</div>
+              <GoongAutoComplete
+                apiKey={process.env.REACT_APP_GOONG_APIKEY}
+                onChange={setOrigin}
+                borderColorFocus={colors.primary_900}
+                borderColor={colors.primary_900}
+                defaultInputValue={origin}
+              />
+            </div>
+            <div className={classes["input-container"]}>
               <div className={classes["input-label"]}>Điểm đến</div>
-              <GooglePlacesAutocomplete
-                apiKey={process.env.REACT_APP_GOOGLE_MAPS_APIKEY}
-                apiOptions={{ language: "vi", region: "VN" }}
-                autocompletionRequest={{
-                  componentRestrictions: {
-                    country: ["vn"],
-                  },
-                }}
-                selectProps={{
-                  defaultInputValue: destination,
-                  onChange: setDestination,
-                }}
+              <GoongAutoComplete
+                apiKey={process.env.REACT_APP_GOONG_APIKEY}
+                onChange={setDestination}
+                borderColorFocus={colors.primary_900}
+                borderColor={colors.primary_900}
+                defaultInputValue={destination}
               />
             </div>
           </div>
         </FadeInOut>
       )}
+      <ToastContainer position="top-left" autoClose={3000} theme="light" />
     </>
   );
 };
