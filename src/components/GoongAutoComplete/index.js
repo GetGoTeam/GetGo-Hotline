@@ -4,7 +4,7 @@ import { useState } from "react";
 import debounce from "lodash.debounce";
 
 export default function GoongAutoComplete(props) {
-  const { apiKey, onChange, borderColorFocus, borderColor } = props;
+  const { apiKey, onChange, borderColorFocus, borderColor, defaultInputValue } = props;
   const [options, setOptions] = useState();
 
   const placeSearch = async (input) => {
@@ -35,6 +35,7 @@ export default function GoongAutoComplete(props) {
   return (
     <div className={classes["container"]}>
       <Select
+        defaultInputValue={defaultInputValue}
         options={options}
         onInputChange={handleInputChange}
         onChange={onChange}

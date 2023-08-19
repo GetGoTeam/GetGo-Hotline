@@ -218,6 +218,7 @@ const CreateBill = () => {
                 onChange={setOrigin}
                 borderColorFocus={colors.primary_900}
                 borderColor={colors.primary_900}
+                defaultInputValue={origin}
               />
             </div>
             <div className={classes["input-container"]}>
@@ -227,6 +228,7 @@ const CreateBill = () => {
                 onChange={setDestination}
                 borderColorFocus={colors.primary_900}
                 borderColor={colors.primary_900}
+                defaultInputValue={destination}
               />
             </div>
           </div>
