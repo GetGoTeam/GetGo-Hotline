@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/no-anonymous-default-export */
-import { faEye, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useMemo, useEffect } from "react";
 
@@ -15,7 +16,7 @@ export default () => {
     const firstPageIndex = (currentPage - 1) * pageSize;
     const lastPageIndex = firstPageIndex + pageSize;
     return listMonitor.slice(firstPageIndex, lastPageIndex);
-  }, [listMonitor]);
+  }, [listMonitor, currentPage]);
   const [opentModal, setOpenModal] = useState(false);
 
   const [events, setEvents] = useState([]);
@@ -29,26 +30,30 @@ export default () => {
   ];
 
   const handleShowTypeVerhicle = vehicleType => {
-    // return vehicleType;
-    return options.find(item => item.value === vehicleType).label;
+    // const type = options.find(item => item.value === vehicleType);
+    // console.log(vehicleType);
+    console.log(listMonitor);
+    return "";
   };
 
   const handleFormatTime = timeCreated => {
-    const splitTime = timeCreated.split("T");
-    const splitDate = splitTime[0].split("-");
-    const splitTimeCreated = splitTime[1].split(":");
-
-    return (
-      splitTimeCreated[0] +
-      ":" +
-      splitTimeCreated[1] +
-      " " +
-      splitDate[2] +
-      "/" +
-      splitDate[1] +
-      "/" +
-      splitDate[0]
-    );
+    // const splitTime = timeCreated.split("T");
+    // const splitDate = splitTime[0].split("-");
+    // const splitTimeCreated = splitTime[1].split(":");
+    // console.log(timeCreated);
+    // return (
+    //   splitTimeCreated[0] +
+    //   ":" +
+    //   splitTimeCreated[1] +
+    //   " " +
+    //   splitDate[2] +
+    //   "/" +
+    //   splitDate[1] +
+    //   "/" +
+    //   splitDate[0]
+    // );
+    console.log("atime");
+    return "";
   };
 
   const handleOpenModalDetails = item => {
@@ -64,7 +69,6 @@ export default () => {
     eventSource.onmessage = event => {
       const eventData = JSON.parse(event.data);
       setEvents(eventData.trip);
-      // console.log(events);
       console.log(eventData);
     };
 
@@ -79,14 +83,7 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    let newListMonitor = [];
-
-    if (listMonitor.length === 0) {
-      newListMonitor = [events];
-    } else {
-      newListMonitor = [...listMonitor, events];
-    }
-    setListMonitor(newListMonitor);
+    // setListMonitor(prevList => [...prevList, events]);
   }, [events]);
 
   return (
@@ -149,61 +146,58 @@ export default () => {
           <div className={`${classes["table-container-tools"]}`}></div>
         </div>
         <div className={classes["table-container-content"]}>
-          {currentTableData.map(
-            (item, index) =>
-              item._id && (
+          {currentTableData.map((item, index) => (
+            <div
+              className={classes["table-container-content-item"]}
+              key={(currentPage - 1) * 10 + index}
+            >
+              <div
+                className={`${classes["table-container-no"]} ${classes["item"]}`}
+              >
+                {(currentPage - 1) * 10 + index}
+              </div>
+              <div
+                className={`${classes["table-container-name"]} ${classes["item"]}`}
+              >
+                {item.phone}
+              </div>
+              <div
+                className={`${classes["table-container-dob"]} ${classes["item"]}`}
+              >
+                {handleShowTypeVerhicle(item.vehicleType)}
+              </div>
+              <div
+                className={`${classes["table-container-phone"]} ${classes["item"]}`}
+              >
+                {item.address_pickup}
+              </div>
+              <div
+                className={`${classes["table-container-account"]} ${classes["item"]}`}
+              >
+                {item.address_destination}
+              </div>
+              <div
+                className={`${classes["table-container-time"]} ${classes["item"]}`}
+              >
+                {handleFormatTime(item.updatedAt)}
+              </div>
+              <div
+                className={`${classes["table-container-status"]} ${classes["item"]}`}
+              >
+                {item.status}
+              </div>
+              <div
+                className={`${classes["table-container-tools"]} ${classes["item"]}`}
+              >
                 <div
-                  className={classes["table-container-content-item"]}
-                  key={(currentPage - 1) * 10 + index}
+                  className={classes["btn-customize"]}
+                  onClick={handleOpenModalDetails(item)}
                 >
-                  <div
-                    className={`${classes["table-container-no"]} ${classes["item"]}`}
-                  >
-                    {(currentPage - 1) * 10 + index}
-                  </div>
-                  <div
-                    className={`${classes["table-container-name"]} ${classes["item"]}`}
-                  >
-                    {item.phone}
-                  </div>
-                  <div
-                    className={`${classes["table-container-dob"]} ${classes["item"]}`}
-                  >
-                    {handleShowTypeVerhicle(item.vehicleType)}
-                  </div>
-                  <div
-                    className={`${classes["table-container-phone"]} ${classes["item"]}`}
-                  >
-                    {item.address_pickup}
-                  </div>
-                  <div
-                    className={`${classes["table-container-account"]} ${classes["item"]}`}
-                  >
-                    {item.address_destination}
-                  </div>
-                  <div
-                    className={`${classes["table-container-time"]} ${classes["item"]}`}
-                  >
-                    {handleFormatTime(item.updatedAt)}
-                  </div>
-                  <div
-                    className={`${classes["table-container-status"]} ${classes["item"]}`}
-                  >
-                    {item.status}
-                  </div>
-                  <div
-                    className={`${classes["table-container-tools"]} ${classes["item"]}`}
-                  >
-                    <div
-                      className={classes["btn-customize"]}
-                      onClick={handleOpenModalDetails(item)}
-                    >
-                      <FontAwesomeIcon icon={faEye} color="#fff" />
-                    </div>
-                  </div>
+                  <FontAwesomeIcon icon={faEye} color="#fff" />
                 </div>
-              )
-          )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       <div className={classes["pagination-bar-container"]}>

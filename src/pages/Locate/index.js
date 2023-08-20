@@ -6,6 +6,8 @@ import classes from "./index.module.scss";
 import Pagination from "~components/Layout/DefaultLayout/Pagination/Pagination";
 import BackDrop from "~components/BackDrop";
 import Locating from "~components/Locating";
+import PluginManager from "~src/plugins2/PluginManager";
+import listPlugins from "~src/plugins2/index";
 
 export default () => {
   const [listLocate, setListLocate] = useState([]);
@@ -16,7 +18,7 @@ export default () => {
     const lastPageIndex = firstPageIndex + pageSize;
     return listLocate.slice(firstPageIndex, lastPageIndex);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listLocate]);
+  }, [listLocate, currentPage]);
 
   const [backdropStatus, setBackdropStatus] = useState(false);
   const [orignPicked, setOrignPicked] = useState();
@@ -24,7 +26,17 @@ export default () => {
 
   const [events, setEvents] = useState([]);
 
-  const [itemLocated, setItemLocated] = useState();
+  const [itemLocated, setItemLocated] = useState({
+    id: "",
+    address_destination: "",
+    address_pickup: "",
+    lat_destination: "",
+    lat_pickup: "",
+    long_destination: "",
+    long_pickup: "",
+    phone: "",
+    vehicleType: "",
+  });
 
   const options = [
     { value: 1, label: "Xe máy" },
@@ -87,6 +99,45 @@ export default () => {
     setListLocate(newListLocate);
     console.log(newListLocate);
   }, [events]);
+
+  const [coordinateOrigin, setCoordinateOrigin] = useState({ lat: 0, lng: 0 });
+  const [coordinateDestination, setCoordinateDestination] = useState({
+    lat: 0,
+    lng: 0,
+  });
+
+  const handleConvert = async (address, type) => {
+    try {
+      listPlugins.forEach(plugin => PluginManager.addPlugin(plugin, address));
+      const plugins = PluginManager.getPlugins();
+      for (const plugin of plugins) {
+        try {
+          await plugin.locateAddress(address);
+          const result = plugin.getCoordinates();
+          if (result.lat && result.lng) {
+            type === 0
+              ? setCoordinateOrigin(result)
+              : setCoordinateDestination(result);
+            PluginManager.resetPlugins();
+            console.log(result);
+            break; // Dừng khi đã tìm thấy kết quả từ plugin nào đó
+          }
+        } catch (error) {
+          console.error(`Error in :`, error);
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    handleConvert(orignPicked, 0);
+  }, [orignPicked]);
+
+  useEffect(() => {
+    handleConvert(destinationPicked, 1);
+  }, [destinationPicked]);
 
   return (
     <div className={classes.container__home}>
@@ -206,8 +257,8 @@ export default () => {
         component={
           <Locating
             setBackdropStatus={setBackdropStatus}
-            originAddress={orignPicked}
-            destinationAddress={destinationPicked}
+            coordinateOrigin={coordinateOrigin}
+            coordinateDestination={coordinateDestination}
             itemLocated={itemLocated}
           />
         }

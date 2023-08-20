@@ -24,40 +24,51 @@ export default function Locating(props) {
     lng: 106.682598,
   };
 
-  const { setBackdropStatus, itemLocated } = props;
+  const {
+    setBackdropStatus,
+    itemLocated,
+    coordinateOrigin,
+    coordinateDestination,
+  } = props;
   const { isLoaded: isLoadedMap } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_APIKEY,
   });
-  const [originCoord, setOriginCoord] = useState(defaultCoord);
-  const [destinationCoord, setDestinationCoord] = useState(defaultCoord);
-  const [isLoadedCoord, setIsLoadedCoord] = useState(false);
+  const [originCoord, setOriginCoord] = useState({
+    lat: coordinateOrigin.lat,
+    lng: coordinateOrigin.lng,
+  });
+  const [destinationCoord, setDestinationCoord] = useState({
+    lat: coordinateDestination.lat,
+    lng: coordinateDestination.lng,
+  });
+  const [isLoadedCoord, setIsLoadedCoord] = useState(true);
 
   // Tạo và cấu hình microkernel
-  const microkernel = new Microkernel();
+  // const microkernel = new Microkernel();
   // microkernel.registerPlugin("googleMapsPlugin", new GoogleMapsPlugin());
   // microkernel.registerPlugin("GoongPlugin", new GoongPlugin());
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const origin = await microkernel.locateAddress(
-          itemLocated.address_pickup,
-          "GoongPlugin"
-        );
-        if (origin) setOriginCoord(origin);
-        const destination = await microkernel.locateAddress(
-          itemLocated.address_destination,
-          "GoongPlugin"
-        );
-        if (destination) setDestinationCoord(destination);
-      } catch (error) {
-        console.error("Lỗi khi lấy vị trí:", error);
-      } finally {
-        setIsLoadedCoord(true);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const origin = await microkernel.locateAddress(
+  //         itemLocated.address_pickup,
+  //         "GoongPlugin"
+  //       );
+  //       if (origin) setOriginCoord(origin);
+  //       const destination = await microkernel.locateAddress(
+  //         itemLocated.address_destination,
+  //         "GoongPlugin"
+  //       );
+  //       if (destination) setDestinationCoord(destination);
+  //     } catch (error) {
+  //       console.error("Lỗi khi lấy vị trí:", error);
+  //     } finally {
+  //       setIsLoadedCoord(true);
+  //     }
+  //   })();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const [screen, setScreen] = useState(1);
   const [fadeInOut, setFadeInOut] = useState(true);
@@ -112,6 +123,17 @@ export default function Locating(props) {
         console.log(error);
       });
   }
+
+  useEffect(() => {
+    setOriginCoord({
+      lat: coordinateOrigin.lat,
+      lng: coordinateOrigin.lng,
+    });
+    setDestinationCoord({
+      lat: coordinateDestination.lat,
+      lng: coordinateDestination.lng,
+    });
+  }, [coordinateOrigin, coordinateDestination]);
 
   return (
     <div className={classes["container"]}>
