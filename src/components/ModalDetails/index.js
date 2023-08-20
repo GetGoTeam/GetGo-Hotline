@@ -8,7 +8,7 @@ import {
   faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 export default props => {
-  const { handleOpen } = props;
+  const { handleOpen, itemMonitorSelected } = props;
 
   return (
     <div className={classes.container__modal}>
@@ -27,8 +27,8 @@ export default props => {
             />
           </div>
           <div className={classes["container__modal-body-location-name"]}>
-            <p>135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM </p>
-            <p>135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM </p>
+            <p>{itemMonitorSelected.address_pickup}</p>
+            <p>{itemMonitorSelected.address_destination}</p>
           </div>
         </div>
         <div className={classes["container__modal-body-infor"]}>
@@ -44,14 +44,19 @@ export default props => {
           <div className={classes["container__modal-body-infor-customer"]}>
             <h3>Thông tin khách hàng</h3>
             <p>Họ và tên: Trần Bảo Long</p>
-            <p>Số điện thoại: 01234567891 </p>
+            <p>Số điện thoại: {itemMonitorSelected.phone} </p>
             <p>Năm sinh: 02/10/2002 </p>
             <p>Giới tính: Nam</p>
           </div>
         </div>
         <div className={classes["container__modal-body-payment"]}>
           <p>Số tiền cần thanh toán: </p>
-          <p>50.000 VND</p>
+          <p>
+            {itemMonitorSelected.price.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </p>
         </div>
         <div className={classes["container__modal-body-btn"]}>
           <div

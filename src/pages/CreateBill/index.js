@@ -38,8 +38,16 @@ const CreateBill = () => {
 
   const [phone, setPhone] = useState();
   const [vehicleType, setVehicleType] = useState();
-  const [origin, setOrigin] = useState();
-  const [destination, setDestination] = useState();
+  const [origin, setOrigin] = useState({
+    address_pickup: "",
+    lat_pickup: "",
+    long_pickup: "",
+  });
+  const [destination, setDestination] = useState({
+    address_destination: "",
+    lat_destination: "",
+    long_destination: "",
+  });
 
   const options = [
     { value: 1, label: "Xe máy" },
@@ -49,8 +57,7 @@ const CreateBill = () => {
 
   const duration = 200;
 
-  const handleCreateBill = () => {
-    console.log(phone);
+  const handleCreateBill = async () => {
     if (!phone || !vehicleType || !origin || !destination)
       Swal.fire({
         icon: "error",
@@ -60,14 +67,41 @@ const CreateBill = () => {
         confirmButtonColor: colors.primary_900,
       });
     else {
-      Swal.fire({
-        icon: "success",
-        title: "Tạo đơn thành công!",
-        width: "50rem",
-        confirmButtonColor: colors.primary_900,
-      }).then(function () {
-        window.location.reload(false);
-      });
+      const dataPost = {
+        address_destination: destination.address_destination,
+        address_pickup: origin.address_pickup,
+        lat_destination: destination.lat_destination,
+        lat_pickup: origin.lat_pickup,
+        long_destination: destination.long_destination,
+        long_pickup: origin.long_pickup,
+        phone: phone,
+        price: 200,
+        status: "Picking Up",
+        vehicleType: vehicleType.value,
+      };
+
+      await axios
+        .post("http://localhost:3007/hotlines/trips", dataPost)
+        .then(response => {
+          console.log(response);
+          Swal.fire({
+            icon: "success",
+            title: "Tạo đơn thành công!",
+            width: "50rem",
+            confirmButtonColor: colors.primary_900,
+          }).then(function () {
+            // window.location.reload(false);
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Thông tin chưa chính xác!",
+            width: "50rem",
+            confirmButtonColor: colors.primary_900,
+          });
+        });
     }
   };
 
@@ -80,20 +114,32 @@ const CreateBill = () => {
         },
       })
       .then(response => {
-        // console.log(response, inputPhone);
+        console.log(response, inputPhone);
         const data = [];
         response.data.forEach(element => {
-          data.push({
-            origin: element.address_pickup,
-            destination: element.address_destination,
-          });
+          data.push(element);
         });
         setListHistory(data);
-        // console.log(listHistory);
       })
       .catch(error => {
         console.error("Error fetching data:", error);
       });
+  };
+
+  const handleUpdateOrigin = e => {
+    setOrigin({
+      address_pickup: e.value,
+      lat_pickup: null,
+      long_pickup: null,
+    });
+  };
+
+  const handleUpdateDestination = e => {
+    setDestination({
+      address_destination: e.value,
+      lat_destination: null,
+      long_destination: null,
+    });
   };
 
   const notify = content => toast.success(content);
@@ -193,12 +239,12 @@ const CreateBill = () => {
                     <div
                       className={`${classes["table-container-origin"]} ${classes["item"]}`}
                     >
-                      {item.origin}
+                      {item.address_pickup}
                     </div>
                     <div
                       className={`${classes["table-container-destination"]} ${classes["item"]}`}
                     >
-                      {item.destination}
+                      {item.address_destination}
                     </div>
                     <div
                       className={`${classes["table-container-tools"]} ${classes["item"]}`}
@@ -206,8 +252,12 @@ const CreateBill = () => {
                       <div
                         className={classes["ToolBtn"]}
                         onClick={() => {
-                          setOrigin(item.origin);
-                          notify("Đã copy điểm đón " + item.origin);
+                          setOrigin({
+                            address_pickup: item.address_pickup,
+                            lat_pickup: item.lat_pickup,
+                            long_pickup: item.long_pickup,
+                          });
+                          notify("Đã copy điểm đón " + item.address_pickup);
                         }}
                       >
                         <ToolBtn icon={faLocationDot} />
@@ -215,8 +265,14 @@ const CreateBill = () => {
                       <div
                         className={classes["ToolBtn"]}
                         onClick={() => {
-                          setDestination(item.destination);
-                          notify("Đã copy điểm đến " + item.destination);
+                          setDestination({
+                            address_destination: item.address_destination,
+                            lat_destination: item.lat_destination,
+                            long_destination: item.long_destination,
+                          });
+                          notify(
+                            "Đã copy điểm đến " + item.address_destination
+                          );
                         }}
                       >
                         <ToolBtn icon={faLocationCrosshairs} />
@@ -285,20 +341,20 @@ const CreateBill = () => {
               <div className={classes["input-label"]}>Điểm đón</div>
               <GoongAutoComplete
                 apiKey={process.env.REACT_APP_GOONG_APIKEY}
-                onChange={setOrigin}
+                onChange={handleUpdateOrigin}
                 borderColorFocus={colors.primary_900}
                 borderColor={colors.primary_900}
-                defaultInputValue={origin}
+                defaultInputValue={origin.address_pickup}
               />
             </div>
             <div className={classes["input-container"]}>
               <div className={classes["input-label"]}>Điểm đến</div>
               <GoongAutoComplete
                 apiKey={process.env.REACT_APP_GOONG_APIKEY}
-                onChange={setDestination}
+                onChange={handleUpdateDestination}
                 borderColorFocus={colors.primary_900}
                 borderColor={colors.primary_900}
-                defaultInputValue={destination}
+                defaultInputValue={destination.address_destination}
               />
             </div>
           </div>
@@ -308,52 +364,5 @@ const CreateBill = () => {
     </>
   );
 };
-
-const database = [
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-  {
-    origin: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-    destination: "135b Trần Hưng Đạo, P.Cầu Ông Lãnh, Q.1, TP HCM ",
-  },
-];
 
 export default CreateBill;

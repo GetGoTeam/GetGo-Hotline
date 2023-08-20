@@ -1,6 +1,11 @@
 import classes from "./Locating.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faChevronLeft, faChevronRight, faCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faXmark,
+  faChevronLeft,
+  faChevronRight,
+  faCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 import { useState, useEffect } from "react";
 import Marker from "~components/Marker";
@@ -10,6 +15,7 @@ import { IconBtn } from "~components/Layout/DefaultLayout/Button";
 import { Bounce } from "react-activity";
 import "react-activity/dist/library.css";
 import { colors } from "~utils/base";
+import axios from "axios";
 
 // Microkernel: Quản lý việc tải, gỡ bỏ và giao tiếp giữa các plugin
 class Microkernel {
@@ -30,14 +36,9 @@ class Microkernel {
   };
 }
 
-const defaultCoord = {
-  lat: 10.762619,
-  lng: 106.682598,
-};
-
 // Plugin Google Maps
 class GoogleMapsPlugin {
-  locateAddress = async (address) => {
+  locateAddress = async address => {
     try {
       const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
         address
@@ -64,11 +65,11 @@ class GoogleMapsPlugin {
 
 // Plugin Goong
 class GoongPlugin {
-  locateAddress = async (address) => {
+  locateAddress = async address => {
     try {
-      const url = `https://rsapi.goong.io/geocode?address=${encodeURIComponent(address)}&api_key=${
-        process.env.REACT_APP_GOONG_APIKEY
-      }`;
+      const url = `https://rsapi.goong.io/geocode?address=${encodeURIComponent(
+        address
+      )}&api_key=${process.env.REACT_APP_GOONG_APIKEY}`;
 
       const response = await fetch(url);
       const data = await response.json();
@@ -92,10 +93,12 @@ class GoongPlugin {
 }
 
 export default function Locating(props) {
-  const { setBackdropStatus, originAddress, destinationAddress } = props;
-  const { isLoaded: isLoadedMap } = useLoadScript({ googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_APIKEY });
-  const [originCoord, setOriginCoord] = useState(defaultCoord);
-  const [destinationCoord, setDestinationCoord] = useState(defaultCoord);
+  const { setBackdropStatus, itemLocated } = props;
+  const { isLoaded: isLoadedMap } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_APIKEY,
+  });
+  const [originCoord, setOriginCoord] = useState({ lat: 0, lng: 0 });
+  const [destinationCoord, setDestinationCoord] = useState({ lat: 0, lng: 0 });
   const [isLoadedCoord, setIsLoadedCoord] = useState(false);
 
   // Tạo và cấu hình microkernel
@@ -106,9 +109,15 @@ export default function Locating(props) {
   useEffect(() => {
     (async () => {
       try {
-        const origin = await microkernel.locateAddress(originAddress, "Goong");
+        const origin = await microkernel.locateAddress(
+          itemLocated.address_pickup,
+          "Goong"
+        );
         if (origin) setOriginCoord(origin);
-        const destination = await microkernel.locateAddress(destinationAddress, "Goong");
+        const destination = await microkernel.locateAddress(
+          itemLocated.address_destination,
+          "Goong"
+        );
         if (destination) setDestinationCoord(destination);
       } catch (error) {
         console.error("Lỗi khi lấy vị trí:", error);
@@ -123,7 +132,7 @@ export default function Locating(props) {
   const [fadeInOut, setFadeInOut] = useState(true);
   const duration = 200;
 
-  const onLoadBegin = (mapInstance) => {
+  const onLoadBegin = mapInstance => {
     mapInstance.addListener("dragend", async () => {
       const newCenter = mapInstance.getCenter();
       const lat = newCenter.lat();
@@ -132,7 +141,7 @@ export default function Locating(props) {
     });
   };
 
-  const onLoadDestination = (mapInstance) => {
+  const onLoadDestination = mapInstance => {
     mapInstance.addListener("dragend", async () => {
       const newCenter = mapInstance.getCenter();
       const lat = newCenter.lat();
@@ -142,21 +151,46 @@ export default function Locating(props) {
   };
 
   function handleConfirm() {
-    Swal.fire({
-      icon: "success",
-      title: "Định vị thành công!",
-      width: "50rem",
-      confirmButtonColor: colors.primary_900,
-    }).then(function () {
-      setBackdropStatus(false);
-    });
+    const dataPatch = {
+      id: itemLocated._id,
+      address_destination: itemLocated.address_destination,
+      address_pickup: itemLocated.address_pickup,
+      lat_destination: destinationCoord.lat,
+      lat_pickup: originCoord.lat,
+      long_destination: destinationCoord.lng,
+      long_pickup: originCoord.lng,
+      phone: itemLocated.phone,
+      vehicleType: itemLocated.vehicleType,
+    };
+
+    console.log(dataPatch);
+    axios
+      .patch(`http://localhost:3007/hotlines/update-trip-location`, dataPatch)
+      .then(response => {
+        console.log(response);
+        Swal.fire({
+          icon: "success",
+          title: "Định vị thành công!",
+          width: "50rem",
+          confirmButtonColor: colors.primary_900,
+        }).then(() => {
+          // window.location.reload(false);
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   return (
     <div className={classes["container"]}>
       <div className={classes["header"]}>
         <div className={classes["label"]}>Locating</div>
-        <FontAwesomeIcon icon={faXmark} className={classes["close-btn"]} onClick={() => setBackdropStatus(false)} />
+        <FontAwesomeIcon
+          icon={faXmark}
+          className={classes["close-btn"]}
+          onClick={() => setBackdropStatus(false)}
+        />
       </div>
 
       <div className={classes["body"]}>
@@ -193,14 +227,23 @@ export default function Locating(props) {
                   }}
                 />
               ) : (
-                <IconBtn title="Xác nhận" iconRight={faCheck} width={100} onClick={() => handleConfirm()} />
+                <IconBtn
+                  title="Xác nhận"
+                  iconRight={faCheck}
+                  width={100}
+                  onClick={() => handleConfirm()}
+                />
               )}
             </div>
           </div>
           {screen === 1 ? (
-            <div className={classes["address"]}>Điểm đón: {originAddress}</div>
+            <div className={classes["address"]}>
+              Điểm đón: {itemLocated.address_pickup}
+            </div>
           ) : (
-            <div className={classes["address"]}>Điểm đến: {destinationAddress}</div>
+            <div className={classes["address"]}>
+              Điểm đến: {itemLocated.address_destination}
+            </div>
           )}
         </div>
 
@@ -224,7 +267,8 @@ export default function Locating(props) {
                       WebkitUserSelect: "none",
                     }}
                   >
-                    Lat: {originCoord.lat.toFixed(6)}, Lng: {originCoord.lng.toFixed(6)}
+                    Lat: {originCoord.lat.toFixed(6)}, Lng:{" "}
+                    {originCoord.lng.toFixed(6)}
                   </div>
                   <div className={classes["marker-container"]}>
                     <Marker />
@@ -255,7 +299,8 @@ export default function Locating(props) {
                       WebkitUserSelect: "none",
                     }}
                   >
-                    Lat: {destinationCoord.lat.toFixed(6)}, Lng: {destinationCoord.lng.toFixed(6)}
+                    Lat: {destinationCoord.lat.toFixed(6)}, Lng:{" "}
+                    {destinationCoord.lng.toFixed(6)}
                   </div>
                   <div className={classes["marker-container"]}>
                     <Marker />
