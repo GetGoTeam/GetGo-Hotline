@@ -6,12 +6,13 @@ import debounce from "lodash.debounce";
 export default function GoongAutoComplete(props) {
   const { apiKey, onChange, borderColorFocus, borderColor, defaultInputValue } = props;
   const [options, setOptions] = useState();
+  const [loading, setLoading] = useState(false);
 
   const placeSearch = async (input) => {
     try {
       const url = `https://rsapi.goong.io/Place/AutoComplete?api_key=${apiKey}&input=${encodeURIComponent(input)}
       }`;
-
+      setLoading(true);
       const response = await fetch(url);
       const data = await response.json();
 
@@ -24,6 +25,8 @@ export default function GoongAutoComplete(props) {
     } catch (error) {
       console.error("Error:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -35,6 +38,7 @@ export default function GoongAutoComplete(props) {
   return (
     <div className={classes["container"]}>
       <Select
+        isLoading={loading}
         defaultInputValue={defaultInputValue}
         options={options}
         onInputChange={handleInputChange}
