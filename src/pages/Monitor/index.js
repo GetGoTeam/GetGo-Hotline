@@ -17,11 +17,14 @@ export default () => {
     const lastPageIndex = firstPageIndex + pageSize;
     return listMonitor.slice(firstPageIndex, lastPageIndex);
   }, [listMonitor, currentPage]);
-  const [opentModal, setOpenModal] = useState(false);
+  const [opentModal, setOpenModal] = useState(true);
 
   const [events, setEvents] = useState([]);
 
-  const [itemMonitorSelected, setItemMonitorSelected] = useState();
+  const [itemMonitorSelected, setItemMonitorSelected] = useState({
+    address_pickup: "",
+    price: 500,
+  });
 
   const options = [
     { value: 1, label: "Xe máy" },

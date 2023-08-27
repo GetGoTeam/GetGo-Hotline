@@ -105,6 +105,9 @@ const CreateBill = () => {
     }
   };
 
+  const headers =
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDM3Yzk0Y2UzNTBhMDM3YjhjODFiNyIsInJvbGUiOiJIb3RsaW5lIiwiaWF0IjoxNjkzMTI5NjQyLCJleHAiOjE2OTMxMzY4NDJ9.GzbXWfPdca43sbi79LprRaNMnfA9UipunSA6yNVg2KM";
+
   const handleSearchPhone = inputPhone => {
     setPhone(inputPhone);
     axios
