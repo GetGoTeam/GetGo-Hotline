@@ -37,4 +37,20 @@ function ToolBtn(props) {
   );
 }
 
-export { CustomizeBtn, IconBtn, ToolBtn };
+function FormBtn(props) {
+  const { icon, title, color, containerStyle, onClick, textStyle } = props;
+  return (
+    <div className={classes["form-btn"]} style={containerStyle} onClick={onClick}>
+      {icon && (
+        <div className={classes["form-btn-icon"]} style={{ color: color }}>
+          {icon}
+        </div>
+      )}
+      <div className={classes["form-btn-title"]} style={textStyle}>
+        {title}
+      </div>
+    </div>
+  );
+}
+
+export { CustomizeBtn, IconBtn, ToolBtn, FormBtn };

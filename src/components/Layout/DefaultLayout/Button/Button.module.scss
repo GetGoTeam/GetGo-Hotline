@@ -94,3 +94,30 @@
   font-weight: bold;
   color: white;
 }
+
+.form-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+  width: fit-content;
+  background-color: $primary_900;
+  border-radius: 5px;
+  transition: filter 0.2s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.form-btn:hover {
+  filter: brightness(85%);
+  cursor: pointer;
+}
+
+.form-btn-icon {
+  font-size: 15px;
+  margin-right: 10px;
+}
+
+.form-btn-title {
+  font-weight: 500;
+}
