@@ -16,14 +16,8 @@ import { Bounce } from "react-activity";
 import "react-activity/dist/library.css";
 import { colors } from "~utils/base";
 import axios from "axios";
-import Microkernel from "~/src/plugins";
 
 export default function Locating(props) {
-  const defaultCoord = {
-    lat: 10.762619,
-    lng: 106.682598,
-  };
-
   const {
     setBackdropStatus,
     itemLocated,
@@ -42,33 +36,6 @@ export default function Locating(props) {
     lng: coordinateDestination.lng,
   });
   const [isLoadedCoord, setIsLoadedCoord] = useState(true);
-
-  // Tạo và cấu hình microkernel
-  // const microkernel = new Microkernel();
-  // microkernel.registerPlugin("googleMapsPlugin", new GoogleMapsPlugin());
-  // microkernel.registerPlugin("GoongPlugin", new GoongPlugin());
-
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const origin = await microkernel.locateAddress(
-  //         itemLocated.address_pickup,
-  //         "GoongPlugin"
-  //       );
-  //       if (origin) setOriginCoord(origin);
-  //       const destination = await microkernel.locateAddress(
-  //         itemLocated.address_destination,
-  //         "GoongPlugin"
-  //       );
-  //       if (destination) setDestinationCoord(destination);
-  //     } catch (error) {
-  //       console.error("Lỗi khi lấy vị trí:", error);
-  //     } finally {
-  //       setIsLoadedCoord(true);
-  //     }
-  //   })();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   const [screen, setScreen] = useState(1);
   const [fadeInOut, setFadeInOut] = useState(true);
@@ -94,7 +61,7 @@ export default function Locating(props) {
 
   function handleConfirm() {
     const dataPatch = {
-      id: itemLocated._id,
+      _id: itemLocated._id,
       address_destination: itemLocated.address_destination,
       address_pickup: itemLocated.address_pickup,
       lat_destination: destinationCoord.lat,
@@ -116,7 +83,7 @@ export default function Locating(props) {
           width: "50rem",
           confirmButtonColor: colors.primary_900,
         }).then(() => {
-          // window.location.reload(false);
+          window.location.reload(false);
         });
       })
       .catch(error => {
@@ -133,6 +100,8 @@ export default function Locating(props) {
       lat: coordinateDestination.lat,
       lng: coordinateDestination.lng,
     });
+
+    console.log(coordinateOrigin, coordinateDestination);
   }, [coordinateOrigin, coordinateDestination]);
 
   return (
@@ -220,7 +189,7 @@ export default function Locating(props) {
                       WebkitUserSelect: "none",
                     }}
                   >
-                    Lat: {originCoord.lat.toFixed(6)}, Lng:{" "}
+                    Lat: {originCoord.lat.toFixed(6)}, Lng:
                     {originCoord.lng.toFixed(6)}
                   </div>
                   <div className={classes["marker-container"]}>
@@ -252,7 +221,7 @@ export default function Locating(props) {
                       WebkitUserSelect: "none",
                     }}
                   >
-                    Lat: {destinationCoord.lat.toFixed(6)}, Lng:{" "}
+                    Lat: {destinationCoord.lat.toFixed(6)}, Lng:
                     {destinationCoord.lng.toFixed(6)}
                   </div>
                   <div className={classes["marker-container"]}>

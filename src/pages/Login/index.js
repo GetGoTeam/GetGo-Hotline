@@ -11,8 +11,8 @@ import Swal from "sweetalert2";
 import request from "~utils/request";
 
 const CssTextField = styled(TextField, {
-  shouldForwardProp: (props) => props !== "focusColor",
-})((p) => ({
+  shouldForwardProp: props => props !== "focusColor",
+})(p => ({
   // input label when focused
   "& label.Mui-focused": {
     color: p.focusColor,
@@ -38,7 +38,7 @@ export default function Login() {
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
 
-  const handleConfirm = async (event) => {
+  const handleConfirm = async event => {
     setLoading(true);
     const objLogin = {
       email: email,
@@ -49,6 +49,7 @@ export default function Login() {
       .then(function (res) {
         localStorage.setItem("token", res.data.token);
         window.location.reload(false);
+        console.log(res.data);
       })
       .catch(function (error) {
         console.log(error);
@@ -65,7 +66,7 @@ export default function Login() {
       });
   };
 
-  const enterPress = (e) => {
+  const enterPress = e => {
     if (e.key === "Enter") {
       handleConfirm();
     }
@@ -87,7 +88,7 @@ export default function Login() {
             variant="outlined"
             label={"Email"}
             fullWidth
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={event => setEmail(event.target.value)}
             focusColor={colors.primary_900}
           />
         </div>
@@ -97,8 +98,9 @@ export default function Login() {
             variant="outlined"
             label={"Mật khẫu"}
             fullWidth
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={event => setPassword(event.target.value)}
             focusColor={colors.primary_900}
+            type="password"
           />
         </div>
         <FormBtn
@@ -110,7 +112,13 @@ export default function Login() {
         />
       </div>
 
-      <Backdrop sx={{ color: colors.primary_900, zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+      <Backdrop
+        sx={{
+          color: colors.primary_900,
+          zIndex: theme => theme.zIndex.drawer + 1,
+        }}
+        open={loading}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
     </div>

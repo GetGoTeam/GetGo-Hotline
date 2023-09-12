@@ -1,14 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable import/no-anonymous-default-export */
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, memo } from "react";
 
 import classes from "./index.module.scss";
 import ModalDetails from "~components/ModalDetails";
 import Pagination from "~components/Layout/DefaultLayout/Pagination/Pagination";
+import request from "~/src/utils/request";
+import { colors } from "~utils/base";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
-export default () => {
+const Monitor = memo(() => {
   const [listMonitor, setListMonitor] = useState([]);
   let pageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,53 +18,56 @@ export default () => {
     const firstPageIndex = (currentPage - 1) * pageSize;
     const lastPageIndex = firstPageIndex + pageSize;
     return listMonitor.slice(firstPageIndex, lastPageIndex);
-  }, [listMonitor, currentPage]);
-  const [opentModal, setOpenModal] = useState(true);
+  }, [currentPage, pageSize, listMonitor]);
 
-  const [events, setEvents] = useState([]);
+  const [opentModal, setOpenModal] = useState(false);
+  const [isFisrtTime, setIsFisrtTime] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [itemMonitorSelected, setItemMonitorSelected] = useState({
     address_pickup: "",
     price: 500,
   });
 
-  const options = [
-    { value: 1, label: "Xe máy" },
-    { value: 4, label: "Xe hơi 4 chỗ" },
-    { value: 7, label: "Xe hơi 7 chỗ" },
-  ];
-
-  const handleShowTypeVerhicle = vehicleType => {
-    // const type = options.find(item => item.value === vehicleType);
-    // console.log(vehicleType);
-    console.log(listMonitor);
-    return "";
-  };
-
-  const handleFormatTime = timeCreated => {
-    // const splitTime = timeCreated.split("T");
-    // const splitDate = splitTime[0].split("-");
-    // const splitTimeCreated = splitTime[1].split(":");
-    // console.log(timeCreated);
-    // return (
-    //   splitTimeCreated[0] +
-    //   ":" +
-    //   splitTimeCreated[1] +
-    //   " " +
-    //   splitDate[2] +
-    //   "/" +
-    //   splitDate[1] +
-    //   "/" +
-    //   splitDate[0]
-    // );
-    console.log("atime");
-    return "";
+  const handleFormatTime = dateUpdate => {
+    const date = dateUpdate ? new Date(dateUpdate) : new Date();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours > 10 ? hours : "0" + hours}:${
+      minutes > 10 ? minutes : "0" + minutes
+    } ${day < 10 ? "0" + day : day}/${
+      month < 10 ? "0" + month : month
+    }/${year}`;
   };
 
   const handleOpenModalDetails = item => {
     setOpenModal(true);
     setItemMonitorSelected(item);
   };
+
+  const getAll = async () => {
+    setIsLoading(true);
+    await request
+      .get("trips")
+      .then(res => {
+        console.log(res.data);
+        setListMonitor(res.data.reverse());
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  if (isFisrtTime) {
+    getAll();
+    setIsFisrtTime(false);
+  }
 
   useEffect(() => {
     const eventSource = new EventSource(
@@ -71,7 +76,9 @@ export default () => {
 
     eventSource.onmessage = event => {
       const eventData = JSON.parse(event.data);
-      setEvents(eventData.trip);
+      if (eventData.savedTrip)
+        setListMonitor(listMonitor => [eventData.savedTrip, ...listMonitor]);
+      else setListMonitor(listMonitor => [eventData.trip, ...listMonitor]);
       console.log(eventData);
     };
 
@@ -85,12 +92,18 @@ export default () => {
     };
   }, []);
 
-  useEffect(() => {
-    // setListMonitor(prevList => [...prevList, events]);
-  }, [events]);
-
   return (
     <div className={classes.container__home}>
+      <Backdrop
+        sx={{
+          color: colors.primary_900,
+          zIndex: theme => theme.zIndex.drawer + 1,
+        }}
+        open={isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       {opentModal ? (
         <div className={classes["container__home-modal"]}>
           <ModalDetails
@@ -157,7 +170,7 @@ export default () => {
               <div
                 className={`${classes["table-container-no"]} ${classes["item"]}`}
               >
-                {(currentPage - 1) * 10 + index}
+                {(currentPage - 1) * 10 + index + 1}
               </div>
               <div
                 className={`${classes["table-container-name"]} ${classes["item"]}`}
@@ -167,7 +180,11 @@ export default () => {
               <div
                 className={`${classes["table-container-dob"]} ${classes["item"]}`}
               >
-                {handleShowTypeVerhicle(item.vehicleType)}
+                {item.vehicleType === 1
+                  ? "Xe máy"
+                  : item.vehicleType === 4
+                  ? "Xe hơi 4 chỗ"
+                  : "Xe hơi 7 chỗ"}
               </div>
               <div
                 className={`${classes["table-container-phone"]} ${classes["item"]}`}
@@ -194,7 +211,7 @@ export default () => {
               >
                 <div
                   className={classes["btn-customize"]}
-                  onClick={handleOpenModalDetails(item)}
+                  onClick={() => handleOpenModalDetails(item)}
                 >
                   <FontAwesomeIcon icon={faEye} color="#fff" />
                 </div>
@@ -214,4 +231,6 @@ export default () => {
       </div>
     </div>
   );
-};
+});
+
+export default Monitor;
